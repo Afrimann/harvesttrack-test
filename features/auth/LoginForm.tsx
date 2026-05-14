@@ -3,6 +3,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   setAuthStep: Dispatch<SetStateAction<"login" | "signup" | "details">>;
@@ -35,6 +36,7 @@ const toggleVariants = {
 };
 
 export default function LoginForm({ setAuthStep }: LoginFormProps) {
+  const router = useRouter();
   return (
     <motion.div
       className="w-full max-w-[520px]"
@@ -107,6 +109,12 @@ export default function LoginForm({ setAuthStep }: LoginFormProps) {
               variants={itemVariants}
               whileFocus={{ scale: 1.01 }}
             />
+            <a
+              className="text-[#2E9E52] text-[12px] text-right underline cursor-pointer"
+              onClick={() => router.push("/auth/forgot-password")}
+            >
+              Forgot Password?
+            </a>
           </motion.div>
 
           <motion.div className="flex flex-col gap-2" variants={itemVariants}>
