@@ -1,11 +1,11 @@
 "use client";
 
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from "framer-motion";
 
 interface RegistrationFormProps {
-  setShowPage: Dispatch<SetStateAction<boolean>>;
+  setAuthStep: Dispatch<SetStateAction<"login" | "signup" | "details">>;
 }
 
 const containerVariants = {
@@ -34,20 +34,22 @@ const toggleVariants = {
   hover: { color: "#2E9E52", scale: 1.02 },
 };
 
-export default function RegistrationForm({ setShowPage }: RegistrationFormProps) {
+export default function RegistrationForm({
+  setAuthStep,
+}: RegistrationFormProps) {
   return (
-    <motion.div 
+    <motion.div
       className="w-full max-w-[520px]"
       initial={{ x: 100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -100, opacity: 0 }}
       transition={{ duration: 0.35, ease: "easeInOut" }}
     >
-      <motion.div 
+      <motion.div
         className="bg-white lg:shadow-[0_20px_60px_rgba(0,0,0,0.08)] px-8 py-6"
         layout
       >
-        <motion.div 
+        <motion.div
           className="mb-4"
           variants={itemVariants}
           initial="hidden"
@@ -61,18 +63,19 @@ export default function RegistrationForm({ setShowPage }: RegistrationFormProps)
           </p>
         </motion.div>
 
-        <motion.form 
+        <motion.form
           className="flex flex-col gap-2"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setAuthStep("details");
+          }}
         >
-          <motion.div 
-            className="flex flex-col gap-2"
-            variants={itemVariants}
-          >
-            <motion.label 
-              htmlFor="email" 
+          <motion.div className="flex flex-col gap-2" variants={itemVariants}>
+            <motion.label
+              htmlFor="email"
               className="label"
               variants={itemVariants}
             >
@@ -86,7 +89,7 @@ export default function RegistrationForm({ setShowPage }: RegistrationFormProps)
               variants={itemVariants}
               whileFocus={{ scale: 1.01 }}
             />
-            <motion.span 
+            <motion.span
               className="text-[12px] text-[#2E9E52]"
               variants={itemVariants}
             >
@@ -94,12 +97,9 @@ export default function RegistrationForm({ setShowPage }: RegistrationFormProps)
             </motion.span>
           </motion.div>
 
-          <motion.div 
-            className="flex flex-col gap-2"
-            variants={itemVariants}
-          >
-            <motion.label 
-              htmlFor="password" 
+          <motion.div className="flex flex-col gap-2" variants={itemVariants}>
+            <motion.label
+              htmlFor="password"
               className="label"
               variants={itemVariants}
             >
@@ -115,12 +115,9 @@ export default function RegistrationForm({ setShowPage }: RegistrationFormProps)
             />
           </motion.div>
 
-          <motion.div 
-            className="flex flex-col gap-2"
-            variants={itemVariants}
-          >
-            <motion.button 
-              type="submit" 
+          <motion.div className="flex flex-col gap-2" variants={itemVariants}>
+            <motion.button
+              type="submit"
               className="btn-primary w-full"
               whileHover={{ scale: 0.99 }}
               whileTap={{ scale: 0.97 }}
@@ -128,7 +125,7 @@ export default function RegistrationForm({ setShowPage }: RegistrationFormProps)
               Sign Up
             </motion.button>
 
-            <motion.div 
+            <motion.div
               className="flex items-center gap-3"
               variants={itemVariants}
             >
@@ -150,7 +147,7 @@ export default function RegistrationForm({ setShowPage }: RegistrationFormProps)
           </motion.div>
         </motion.form>
 
-        <motion.div 
+        <motion.div
           className="mt-6 text-center"
           variants={itemVariants}
           initial="hidden"
@@ -158,9 +155,9 @@ export default function RegistrationForm({ setShowPage }: RegistrationFormProps)
         >
           <p className="text-[13px] text-[#6B7280]">
             Already have an account?{" "}
-            <motion.a 
+            <motion.a
               className="text-[#2E9E52] font-semibold underline cursor-pointer"
-              onClick={() => setShowPage(false)}
+              onClick={() => setAuthStep("login")}
               variants={toggleVariants}
               whileHover="hover"
             >

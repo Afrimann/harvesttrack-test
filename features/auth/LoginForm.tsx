@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { motion } from "framer-motion";
 
 interface LoginFormProps {
-  setShowPage: Dispatch<SetStateAction<boolean>>;
+  setAuthStep: Dispatch<SetStateAction<"login" | "signup" | "details">>;
 }
 
 const containerVariants = {
@@ -34,7 +34,7 @@ const toggleVariants = {
   hover: { color: "#2E9E52", scale: 1.02 },
 };
 
-export default function LoginForm({ setShowPage }: LoginFormProps) {
+export default function LoginForm({ setAuthStep }: LoginFormProps) {
   return (
     <motion.div
       className="w-full max-w-[520px]"
@@ -151,7 +151,7 @@ export default function LoginForm({ setShowPage }: LoginFormProps) {
             Don&apos;t have an account?{" "}
             <motion.a
               className="text-[#2E9E52] font-semibold underline cursor-pointer"
-              onClick={() => setShowPage(true)}
+              onClick={() => setAuthStep("signup")}
               variants={toggleVariants}
               whileHover="hover"
             >

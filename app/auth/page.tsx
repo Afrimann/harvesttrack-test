@@ -1,6 +1,7 @@
 "use client";
 import LoginForm from "@/features/auth/LoginForm";
 import RegistrationForm from "@/features/auth/RegistrationForm";
+import UserDetailsForm from "@/features/auth/UserDetailsForm";
 import React, { useEffect } from "react";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 
@@ -24,11 +25,9 @@ const textItemVariants: Variants = {
   },
 };
 
-export default function RegisterPage() {
-  const [showPage, setShowPage] = React.useState(false);
-  useEffect(() => {
-    setShowPage(true);
-  }, []);
+export default function AuthPage() {
+  const [authStep, setAuthStep] = React.useState<"login" | "signup" | "details">("signup");
+
   return (
     <div
       className="min-h-screen flex items-center justify-center "
@@ -69,16 +68,20 @@ export default function RegisterPage() {
           </motion.div>
 
           <motion.div
-            className="w-full lg:w-1/2 lg:px-12"
+            className="w-full lg:w-1/2 py-6 lg:px-12"
             layout
             animate={{ height: "auto" }}
             transition={{ duration: 0.35 }}
           >
             <AnimatePresence mode="wait">
-              {showPage ? (
-                <RegistrationForm key="signup" setShowPage={setShowPage} />
-              ) : (
-                <LoginForm key="login" setShowPage={setShowPage} />
+              {authStep === "signup" && (
+                <RegistrationForm key="signup" setAuthStep={setAuthStep} />
+              )}
+              {authStep === "login" && (
+                <LoginForm key="login" setAuthStep={setAuthStep} />
+              )}
+              {authStep === "details" && (
+                <UserDetailsForm key="details" setAuthStep={setAuthStep} />
               )}
             </AnimatePresence>
           </motion.div>
