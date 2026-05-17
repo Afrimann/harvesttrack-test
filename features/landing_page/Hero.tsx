@@ -12,14 +12,14 @@ export default function Hero() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
+        backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Beautiful overlay gradients for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50" />
+      {/* Preload image optimization */}
+      <link rel="preload" as="image" href="/devotional_evangelism.webp" />
 
-      {/* Subtle animated overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#2E9E52]/10 to-transparent opacity-50" />
+      {/* Subtle overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent pointer-events-none" />
 
       <style>{`
         @keyframes fadeInUp {
