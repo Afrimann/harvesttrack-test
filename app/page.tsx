@@ -1,6 +1,13 @@
+import Header from "@/features/landing_page/Header";
+import Hero from "@/features/landing_page/Hero";
 
 export default function LandingPage() {
   return (
-    <div>page</div>
-  )
+    <div>
+      <Header />
+      <main>
+        <Hero />
+      </main>
+    </div>
+  );
 }
