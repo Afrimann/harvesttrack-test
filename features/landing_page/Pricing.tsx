@@ -19,10 +19,21 @@ const FREE_FEATURES = [
   "Basic pipeline & tasks",
 ] as const;
 
+const BASIC_FEATURES = [
+  "Up to 2,000 contacts",
+  "3 workspaces, 15 members",
+  "QR contact capture",
+  "Advanced pipeline & tasks",
+  "Email follow-up reminders",
+  "Basic analytics",
+] as const;
+
 const PRO_FEATURES = [
   "Unlimited contacts",
   "Unlimited team members",
   "Advanced analytics & exports",
+  "Custom QR branding",
+  "API access",
   "Priority support & training",
 ] as const;
 
@@ -67,7 +78,7 @@ export default function Pricing() {
           aria-hidden="true"
         />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section header */}
           <motion.div
             className="text-center max-w-xl mx-auto mb-14 lg:mb-16"
@@ -91,7 +102,7 @@ export default function Pricing() {
 
           {/* Cards */}
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start"
             variants={containerVariantsSlow}
             initial="hidden"
             animate={isInView ? "visible" : "hidden"}
@@ -102,7 +113,6 @@ export default function Pricing() {
                          transition-shadow duration-300 hover:shadow-lg hover:shadow-gray-200/60"
               variants={itemVariants}
             >
-              {/* Plan info */}
               <div className="space-y-3">
                 <p className="text-base font-bold text-gray-900">Free</p>
                 <div className="flex items-end gap-1.5">
@@ -128,13 +138,13 @@ export default function Pricing() {
               </Link>
             </motion.div>
 
-            {/* ── Pro plan ──────────────────────────────────────────────── */}
+            {/* ── Basic plan ────────────────────────────────────────────── */}
             <motion.div
               className="relative bg-white rounded-2xl border-2 border-[#2E9E52] p-8 flex flex-col gap-8
                          transition-shadow duration-300 hover:shadow-xl hover:shadow-green-500/15"
               variants={itemVariants}
             >
-              {/* Most popular badge — overlaps the top border */}
+              {/* Most popular badge */}
               <div
                 className="absolute -top-3.5 left-1/2 -translate-x-1/2"
                 aria-label="Most popular plan"
@@ -144,7 +154,38 @@ export default function Pricing() {
                 </span>
               </div>
 
-              {/* Plan info */}
+              <div className="space-y-3">
+                <p className="text-base font-bold text-gray-900">Basic</p>
+                <div className="flex items-end gap-1.5">
+                  <span className="text-5xl font-black text-gray-900 leading-none">
+                    $9
+                  </span>
+                  <span className="text-base text-gray-400 mb-1">/mo</span>
+                </div>
+                <p className="text-sm text-gray-500">
+                  For growing mission teams tracking real progress.
+                </p>
+              </div>
+
+              <FeatureList items={BASIC_FEATURES} />
+
+              <Link
+                href="/dashboard"
+                className="block text-center px-6 py-3 rounded-xl bg-[#2E9E52] text-white text-sm font-semibold
+                           hover:bg-[#268547] hover:shadow-lg hover:shadow-green-500/30
+                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E9E52] focus-visible:ring-offset-2
+                           transition-all duration-200"
+              >
+                Start 14-day trial
+              </Link>
+            </motion.div>
+
+            {/* ── Pro plan ──────────────────────────────────────────────── */}
+            <motion.div
+              className="relative bg-white rounded-2xl border border-gray-200 p-8 flex flex-col gap-8
+                         transition-shadow duration-300 hover:shadow-lg hover:shadow-gray-200/60"
+              variants={itemVariants}
+            >
               <div className="space-y-3">
                 <p className="text-base font-bold text-gray-900">Pro</p>
                 <div className="flex items-end gap-1.5">
@@ -162,12 +203,12 @@ export default function Pricing() {
 
               <Link
                 href="/dashboard"
-                className="block text-center px-6 py-3 rounded-xl bg-[#2E9E52] text-white text-sm font-semibold
-                           hover:bg-[#268547] hover:shadow-lg hover:shadow-green-500/30
+                className="block text-center px-6 py-3 rounded-xl border border-gray-300 text-sm font-semibold text-gray-900
+                           hover:bg-gray-50 hover:border-gray-400
                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E9E52] focus-visible:ring-offset-2
                            transition-all duration-200"
               >
-                Start 14-day trial
+                Get started
               </Link>
             </motion.div>
           </motion.div>

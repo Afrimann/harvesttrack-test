@@ -63,7 +63,7 @@ function HeroContent() {
           </span>
           .
         </h1>
-        <p className="text-[1.05rem] text-white/75 leading-relaxed max-w-[30rem]">
+        <p className="text-[1.05rem] font-medium text-white/90 leading-7 max-w-120 [text-shadow:0_1px_8px_rgba(0,0,0,0.55)]">
           HarvestTrack gives missionaries a QR-powered contact capture flow,
           structured follow-up tasks, and a pipeline that mirrors the real
           spiritual journey — from first hello to joining a church.
