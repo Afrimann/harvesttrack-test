@@ -35,7 +35,7 @@ export default function ForgotPasswordLayout({
       transition={{ duration: 0.35 }}
     >
       <motion.div
-        className="bg-white lg:shadow-[0_20px_60px_rgba(0,0,0,0.08)] px-8 py-6"
+        className="bg-white lg:shadow-[0_20px_60px_rgba(0,0,0,0.08)] px-4 py-6 lg:px-8"
         layout
       >
         {/* Progress Indicator */}

@@ -11,10 +11,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
   exit: { opacity: 0 },
 };
@@ -25,217 +22,156 @@ const itemVariants = {
   exit: { opacity: 0, y: -12, transition: { duration: 0.2 } },
 };
 
-const buttonHoverVariants = {
-  hover: { y: -4, transition: { duration: 0.2 } },
-};
-
 export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
-  const [accountType, setAccountType] = useState<"Personal" | "Church">(
-    "Personal",
-  );
+  const [accountType, setAccountType] = useState<"Personal" | "Church">("Personal");
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
     workspaceName: "",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Add your API call here to save user details
-    console.log("User Details:", {
-      ...formData,
-      accountType,
-    });
-    // Navigate to next page after successful submission
-  };
+    // TODO: POST user details to API
+  }
 
   return (
     <motion.div
-      className="w-full max-w-[520px]"
-      initial={{ x: 100, opacity: 0 }}
+      className="w-full max-w-130"
+      initial={{ x: 60, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      exit={{ x: -100, opacity: 0 }}
+      exit={{ x: -60, opacity: 0 }}
       transition={{ duration: 0.35, ease: "easeInOut" }}
     >
-      <motion.div
-        className="bg-white lg:shadow-[0_20px_60px_rgba(0,0,0,0.08)] px-8 py-6"
-        layout
-      >
+      <motion.div className="bg-white lg:shadow-[0_20px_60px_rgba(0,0,0,0.08)] px-4 py-6 lg:px-8" layout>
+        {/* Header */}
         <motion.div
-          className="mb-4"
+          className="mb-6"
           variants={itemVariants}
           initial="hidden"
           animate="visible"
         >
-          <h1 className="text-[24px] font-semibold">Fill in your details</h1>
-          <p className="text-[14px] text-[#6B7280]">Sign up caption</p>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Fill in your details
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Just a few more things to set up your workspace.
+          </p>
         </motion.div>
 
         <motion.form
-          className="flex flex-col gap-2"
+          className="flex flex-col gap-4"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           onSubmit={handleSubmit}
         >
-          {/* Name Field */}
-          <motion.div className="flex flex-col gap-2" variants={itemVariants}>
-            <motion.label
-              htmlFor="fullName"
-              className="label text-[14px] font-medium text-[#1F2937]"
-              variants={itemVariants}
-            >
+          {/* Full name */}
+          <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
+            <label htmlFor="fullName" className="label">
               Name
-            </motion.label>
-            <motion.input
+            </label>
+            <input
               id="fullName"
               name="fullName"
               type="text"
-              placeholder="Enter name"
+              placeholder="Enter your full name"
               value={formData.fullName}
               onChange={handleInputChange}
-              className="input h-[48px] border border-[#D1D5DB] rounded-lg px-4 py-2 focus:outline-none focus:border-[#2E9E52] focus:ring-2 focus:ring-[#2E9E52]/20"
-              variants={itemVariants}
-              whileFocus={{ scale: 1.01 }}
+              className="input h-12"
             />
-            <motion.span
-              className="text-[12px] text-[#2E9E52]"
-              variants={itemVariants}
-            >
-              Please enter your full name
-            </motion.span>
           </motion.div>
 
-          {/* Contact Detail Field */}
-          <motion.div className="flex flex-col gap-2" variants={itemVariants}>
-            <motion.label
-              htmlFor="phoneNumber"
-              className="label text-[14px] font-medium text-[#1F2937]"
-              variants={itemVariants}
-            >
-              Contact detail
-            </motion.label>
-            <motion.input
+          {/* Phone */}
+          <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
+            <label htmlFor="phoneNumber" className="label">
+              Phone number
+            </label>
+            <input
               id="phoneNumber"
               name="phoneNumber"
               type="tel"
-              placeholder="Enter phone number"
+              placeholder="+234 90 XXX XXXX"
               value={formData.phoneNumber}
               onChange={handleInputChange}
-              className="input h-[48px] border border-[#D1D5DB] rounded-lg px-4 py-2 focus:outline-none focus:border-[#2E9E52] focus:ring-2 focus:ring-[#2E9E52]/20"
-              variants={itemVariants}
-              whileFocus={{ scale: 1.01 }}
+              className="input h-12"
             />
-            <motion.span
-              className="text-[12px] text-[#2E9E52]"
-              variants={itemVariants}
-            >
-              +234 90 XXX XXXX
-            </motion.span>
           </motion.div>
 
-          {/* Account Type Selector */}
+          {/* Account type */}
           <motion.div className="flex flex-col gap-2" variants={itemVariants}>
-            <motion.label
-              className="label text-[14px] font-medium text-[#1F2937]"
-              variants={itemVariants}
+            <p className="label">Account type</p>
+            <div
+              className="grid grid-cols-2 gap-2"
+              role="group"
+              aria-label="Account type"
             >
-              Account type
-            </motion.label>
-            <motion.div className="flex gap-4" variants={itemVariants}>
-              <motion.button
-                type="button"
-                onClick={() => setAccountType("Personal")}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                  accountType === "Personal"
-                    ? "bg-[#2E9E52] text-white"
-                    : "bg-[#E5E7EB] text-[#1F2937]"
-                }`}
-                whileHover="hover"
-                variants={buttonHoverVariants}
-              >
-                Personal
-              </motion.button>
-              <motion.button
-                type="button"
-                onClick={() => setAccountType("Church")}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all ${
-                  accountType === "Church"
-                    ? "bg-[#2E9E52] text-white"
-                    : "bg-[#E5E7EB] text-[#1F2937]"
-                }`}
-                whileHover="hover"
-                variants={buttonHoverVariants}
-              >
-                Church
-              </motion.button>
-            </motion.div>
+              {(["Personal", "Church"] as const).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  aria-pressed={accountType === type}
+                  onClick={() => setAccountType(type)}
+                  className={`py-2.5 rounded-xl text-sm font-semibold transition-all duration-150
+                    ${accountType === type
+                      ? "bg-[#2E9E52] text-white shadow-sm"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
           </motion.div>
 
-          {/* Workspace Name Field */}
-          <motion.div className="flex flex-col gap-2" variants={itemVariants}>
-            <motion.label
-              htmlFor="workspaceName"
-              className="label text-[14px] font-medium text-[#1F2937]"
-              variants={itemVariants}
-            >
+          {/* Workspace name */}
+          <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
+            <label htmlFor="workspaceName" className="label">
               Workspace name
-            </motion.label>
-            <motion.input
+            </label>
+            <input
               id="workspaceName"
               name="workspaceName"
               type="text"
-              placeholder="Enter name"
+              placeholder="Your organisation or church name"
               value={formData.workspaceName}
               onChange={handleInputChange}
-              className="input h-[48px] border border-[#D1D5DB] rounded-lg px-4 py-2 focus:outline-none focus:border-[#2E9E52] focus:ring-2 focus:ring-[#2E9E52]/20"
-              variants={itemVariants}
-              whileFocus={{ scale: 1.01 }}
+              className="input h-12"
             />
-            <motion.span
-              className="text-[12px] text-[#6B7280]"
-              variants={itemVariants}
-            >
-              Organization or Church name
-            </motion.span>
           </motion.div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <motion.button
             type="submit"
-            className="mt-4 h-[48px] bg-[#2E9E52] text-white rounded-lg font-semibold hover:bg-[#248A45] transition-colors"
+            className="btn-primary w-full mt-2"
             variants={itemVariants}
-            whileHover="hover"
+            whileHover={{ scale: 0.99 }}
+            whileTap={{ scale: 0.97 }}
           >
-            Submit
+            Get started
           </motion.button>
         </motion.form>
 
-        {/* Back to Login Link */}
-        <motion.div
-          className="mt-4 text-center"
+        {/* Footer */}
+        <motion.p
+          className="mt-6 text-center text-sm text-gray-500"
           variants={itemVariants}
           initial="hidden"
           animate="visible"
         >
-          <p className="text-[14px] text-[#6B7280]">
-            Already have an account?{" "}
-            <button
-              onClick={() => setAuthStep("login")}
-              className="text-[#2E9E52] font-semibold hover:underline"
-            >
-              Login
-            </button>
-          </p>
-        </motion.div>
+          Need to go back?{" "}
+          <button
+            onClick={() => setAuthStep("signup")}
+            className="text-[#2E9E52] font-semibold hover:underline focus-visible:outline-none"
+          >
+            Return to sign up
+          </button>
+        </motion.p>
       </motion.div>
     </motion.div>
   );

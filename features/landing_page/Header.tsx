@@ -77,7 +77,7 @@ export default function Header() {
               Sign in
             </Link>
             <Link
-              href="/dashboard"
+              href="/workspace/dashboard"
               className="inline-flex items-center gap-2 px-4 py-2 bg-[#2E9E52] text-white text-sm font-semibold rounded-lg
                          hover:bg-[#268547] hover:shadow-md hover:shadow-green-500/20
                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E9E52] focus-visible:ring-offset-2
