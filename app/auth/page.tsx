@@ -2,7 +2,6 @@
 
 import LoginForm from "@/features/auth/LoginForm";
 import RegistrationForm from "@/features/auth/RegistrationForm";
-import UserDetailsForm from "@/features/auth/UserDetailsForm";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -20,13 +19,10 @@ const textItemVariants = {
 };
 
 export default function AuthPage() {
-  const [authStep, setAuthStep] = React.useState<
-    "login" | "signup" | "details"
-  >("signup");
+  const [authStep, setAuthStep] = React.useState<"login" | "signup">("signup");
 
   return (
     <div className="min-h-screen">
-      {/* Background image — full page, both mobile and desktop */}
       <div
         className="fixed inset-0 -z-20"
         style={{
@@ -37,21 +33,18 @@ export default function AuthPage() {
         }}
         aria-hidden="true"
       />
-
-      {/* Mobile-only gradient: nature visible at top, fades to white below */}
       <div
         className="lg:hidden fixed inset-0 -z-10 bg-linear-to-b from-transparent via-white/75 to-white"
         aria-hidden="true"
       />
 
-      {/* Content */}
       <div className="lg:min-h-screen lg:flex lg:items-center lg:justify-center">
         <div className="w-full lg:max-w-275 lg:overflow-hidden">
           <motion.div
             className="flex flex-col lg:flex-row lg:items-center"
             layout
           >
-            {/* Left side — branding (desktop only) */}
+            {/* Left side — branding */}
             <motion.div
               className="hidden lg:block lg:w-1/2 p-10 lg:p-16"
               variants={textContainerVariants}
@@ -92,9 +85,6 @@ export default function AuthPage() {
                 )}
                 {authStep === "login" && (
                   <LoginForm key="login" setAuthStep={setAuthStep} />
-                )}
-                {authStep === "details" && (
-                  <UserDetailsForm key="details" setAuthStep={setAuthStep} />
                 )}
               </AnimatePresence>
             </motion.div>

@@ -2,6 +2,8 @@
 
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
+import { useUserDetails } from "@/lib/hooks/useAuth";
+import { HttpError } from "@/lib/types/api.types";
 
 interface UserDetailsFormProps {
   setAuthStep: Dispatch<SetStateAction<"login" | "signup" | "details">>;
@@ -29,15 +31,21 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
     phoneNumber: "",
     workspaceName: "",
   });
+  const userDetails = useUserDetails();
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: POST user details to API
+    userDetails.mutate({
+      fullName: formData.fullName,
+      phoneNumber: formData.phoneNumber,
+      accountType,
+      workspaceName: formData.workspaceName,
+    });
   }
 
   return (
@@ -71,6 +79,18 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
           animate="visible"
           onSubmit={handleSubmit}
         >
+          {/* API error */}
+          {userDetails.error && (
+            <motion.p
+              className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+              variants={itemVariants}
+            >
+              {userDetails.error instanceof HttpError
+                ? userDetails.error.message
+                : "Something went wrong. Please try again."}
+            </motion.p>
+          )}
+
           {/* Full name */}
           <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
             <label htmlFor="fullName" className="label">
@@ -83,6 +103,7 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
               placeholder="Enter your full name"
               value={formData.fullName}
               onChange={handleInputChange}
+              required
               className="input h-12"
             />
           </motion.div>
@@ -99,6 +120,7 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
               placeholder="+234 90 XXX XXXX"
               value={formData.phoneNumber}
               onChange={handleInputChange}
+              required
               className="input h-12"
             />
           </motion.div>
@@ -141,6 +163,7 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
               placeholder="Your organisation or church name"
               value={formData.workspaceName}
               onChange={handleInputChange}
+              required
               className="input h-12"
             />
           </motion.div>
@@ -148,12 +171,13 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
           {/* Submit */}
           <motion.button
             type="submit"
-            className="btn-primary w-full mt-2"
+            disabled={userDetails.isPending}
+            className="btn-primary w-full mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
             variants={itemVariants}
             whileHover={{ scale: 0.99 }}
             whileTap={{ scale: 0.97 }}
           >
-            Get started
+            {userDetails.isPending ? "Setting up workspace…" : "Get started"}
           </motion.button>
         </motion.form>
 

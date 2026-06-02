@@ -3,6 +3,9 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import ForgotPasswordLayout from "./ForgotPasswordLayout";
+import { useResetPassword } from "@/lib/hooks/useAuth";
+import { useAuthStore } from "@/lib/stores/auth.store";
+import { HttpError } from "@/lib/types/api.types";
 
 interface ResetPasswordStepProps {
   setStep: Dispatch<SetStateAction<1 | 2 | 3>>;
@@ -12,20 +15,13 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 12 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-};
-
-const buttonHoverVariants = {
-  hover: { y: -4, transition: { duration: 0.2 } },
 };
 
 interface FormData {
@@ -40,25 +36,23 @@ export default function ResetPasswordStep({ setStep }: ResetPasswordStepProps) {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [validationError, setValidationError] = useState("");
+  const { pendingEmail, pendingOtp } = useAuthStore();
+  const resetPassword = useResetPassword();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setError("");
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setValidationError("");
   };
 
   const validatePassword = () => {
     if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters");
+      setValidationError("Password must be at least 8 characters");
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setValidationError("Passwords do not match");
       return false;
     }
     return true;
@@ -66,19 +60,24 @@ export default function ResetPasswordStep({ setStep }: ResetPasswordStepProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validatePassword()) return;
-
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      // Redirect to login or success page
-      window.location.href = "/auth";
-    }, 1500);
+    if (!validatePassword() || !pendingEmail || !pendingOtp) return;
+    resetPassword.mutate({
+      email: pendingEmail,
+      otp: pendingOtp,
+      newPassword: formData.password,
+    });
   };
 
   const passwordsMatch =
     formData.password && formData.password === formData.confirmPassword;
+
+  const displayError =
+    validationError ||
+    (resetPassword.error instanceof HttpError
+      ? resetPassword.error.message
+      : resetPassword.error
+        ? "Something went wrong. Please try again."
+        : "");
 
   return (
     <ForgotPasswordLayout
@@ -95,28 +94,26 @@ export default function ResetPasswordStep({ setStep }: ResetPasswordStepProps) {
         onSubmit={handleSubmit}
       >
         {/* Error Message */}
-        {error && (
+        {displayError && (
           <motion.div
             className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            variants={itemVariants}
           >
-            {error}
+            {displayError}
           </motion.div>
         )}
 
         {/* New Password Field */}
         <motion.div className="flex flex-col gap-2" variants={itemVariants}>
-          <motion.label
+          <label
             htmlFor="password"
             className="label text-sm font-medium text-[#1F2937]"
-            variants={itemVariants}
           >
             New Password
-          </motion.label>
+          </label>
           <div className="relative">
-            <motion.input
+            <input
               id="password"
               name="password"
               type={showPassword ? "text" : "password"}
@@ -125,37 +122,30 @@ export default function ResetPasswordStep({ setStep }: ResetPasswordStepProps) {
               onChange={handleInputChange}
               required
               className="w-full h-12 border border-[#D1D5DB] rounded-lg px-4 py-2 focus:outline-none focus:border-[#2E9E52] focus:ring-2 focus:ring-[#2E9E52]/20 transition-all"
-              variants={itemVariants}
-              whileFocus={{ scale: 1.01 }}
             />
-            <motion.button
+            <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#2E9E52]"
-              whileHover={{ scale: 1.1 }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#6B7280] hover:text-[#2E9E52]"
             >
               {showPassword ? "Hide" : "Show"}
-            </motion.button>
+            </button>
           </div>
-          <motion.span
-            className="text-xs text-[#6B7280]"
-            variants={itemVariants}
-          >
+          <span className="text-xs text-[#6B7280]">
             Must be at least 8 characters
-          </motion.span>
+          </span>
         </motion.div>
 
         {/* Confirm Password Field */}
         <motion.div className="flex flex-col gap-2" variants={itemVariants}>
-          <motion.label
+          <label
             htmlFor="confirmPassword"
             className="label text-sm font-medium text-[#1F2937]"
-            variants={itemVariants}
           >
             Confirm Password
-          </motion.label>
+          </label>
           <div className="relative">
-            <motion.input
+            <input
               id="confirmPassword"
               name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
@@ -164,24 +154,20 @@ export default function ResetPasswordStep({ setStep }: ResetPasswordStepProps) {
               onChange={handleInputChange}
               required
               className="w-full h-12 border border-[#D1D5DB] rounded-lg px-4 py-2 focus:outline-none focus:border-[#2E9E52] focus:ring-2 focus:ring-[#2E9E52]/20 transition-all"
-              variants={itemVariants}
-              whileFocus={{ scale: 1.01 }}
             />
-            <motion.button
+            <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#2E9E52]"
-              whileHover={{ scale: 1.1 }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#6B7280] hover:text-[#2E9E52]"
             >
               {showConfirmPassword ? "Hide" : "Show"}
-            </motion.button>
+            </button>
           </div>
-          {passwordsMatch && formData.password && (
+          {passwordsMatch && (
             <motion.span
               className="text-xs text-[#2E9E52]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              variants={itemVariants}
             >
               ✓ Passwords match
             </motion.span>
@@ -191,12 +177,11 @@ export default function ResetPasswordStep({ setStep }: ResetPasswordStepProps) {
         {/* Submit Button */}
         <motion.button
           type="submit"
-          disabled={!passwordsMatch || loading}
+          disabled={!passwordsMatch || resetPassword.isPending}
           className="mt-4 h-12 bg-[#2E9E52] text-white rounded-lg font-semibold hover:bg-[#248A45] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           variants={itemVariants}
-          whileHover={passwordsMatch && !loading ? "hover" : {}}
         >
-          {loading ? "Resetting..." : "Reset Password"}
+          {resetPassword.isPending ? "Resetting…" : "Reset Password"}
         </motion.button>
 
         {/* Back */}

@@ -1,11 +1,13 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from "framer-motion";
+import { useSignup } from "@/lib/hooks/useAuth";
+import { HttpError } from "@/lib/types/api.types";
 
 interface RegistrationFormProps {
-  setAuthStep: Dispatch<SetStateAction<"login" | "signup" | "details">>;
+  setAuthStep: Dispatch<SetStateAction<"login" | "signup">>;
 }
 
 const containerVariants = {
@@ -24,6 +26,15 @@ const itemVariants = {
 };
 
 export default function RegistrationForm({ setAuthStep }: RegistrationFormProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const signup = useSignup();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    signup.mutate({ email, password });
+  };
+
   return (
     <motion.div
       className="w-full max-w-130"
@@ -53,11 +64,20 @@ export default function RegistrationForm({ setAuthStep }: RegistrationFormProps)
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setAuthStep("details");
-          }}
+          onSubmit={handleSubmit}
         >
+          {/* API error */}
+          {signup.error && (
+            <motion.p
+              className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+              variants={itemVariants}
+            >
+              {signup.error instanceof HttpError
+                ? signup.error.message
+                : "Something went wrong. Please try again."}
+            </motion.p>
+          )}
+
           {/* Email */}
           <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
             <label htmlFor="signup-email" className="label">
@@ -67,6 +87,9 @@ export default function RegistrationForm({ setAuthStep }: RegistrationFormProps)
               id="signup-email"
               type="email"
               placeholder="Enter email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="input h-12"
             />
           </motion.div>
@@ -80,6 +103,9 @@ export default function RegistrationForm({ setAuthStep }: RegistrationFormProps)
               id="signup-password"
               type="password"
               placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               className="input h-12"
             />
           </motion.div>
@@ -88,11 +114,12 @@ export default function RegistrationForm({ setAuthStep }: RegistrationFormProps)
           <motion.div className="flex flex-col gap-3 pt-1" variants={itemVariants}>
             <motion.button
               type="submit"
-              className="btn-primary w-full"
+              disabled={signup.isPending}
+              className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
               whileHover={{ scale: 0.99 }}
               whileTap={{ scale: 0.97 }}
             >
-              Sign up
+              {signup.isPending ? "Creating account…" : "Sign up"}
             </motion.button>
 
             <div className="flex items-center gap-3">

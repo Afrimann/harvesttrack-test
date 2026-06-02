@@ -3,6 +3,8 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { motion } from "framer-motion";
 import ForgotPasswordLayout from "./ForgotPasswordLayout";
+import { useForgotPassword } from "@/lib/hooks/useAuth";
+import { HttpError } from "@/lib/types/api.types";
 
 interface EnterEmailStepProps {
   setStep: Dispatch<SetStateAction<1 | 2 | 3>>;
@@ -12,10 +14,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
 };
 
@@ -24,23 +23,18 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
-const buttonHoverVariants = {
-  hover: { y: -4, transition: { duration: 0.2 } },
-};
-
 export default function EnterEmailStep({ setStep }: EnterEmailStepProps) {
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const forgotPassword = useForgotPassword();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    // Simulate API call to send OTP
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await forgotPassword.mutateAsync({ email });
       setStep(2);
-    }, 1500);
+    } catch {
+      // error shown via forgotPassword.error below
+    }
   };
 
   return (
@@ -57,16 +51,27 @@ export default function EnterEmailStep({ setStep }: EnterEmailStepProps) {
         animate="visible"
         onSubmit={handleSubmit}
       >
-        {/* Email Field */}
-        <motion.div className="flex flex-col gap-2" variants={itemVariants}>
-          <motion.label
-            htmlFor="email"
-            className="label text-sm font-medium text-[#1F2937]"
+        {/* API error */}
+        {forgotPassword.error && (
+          <motion.p
+            className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
             variants={itemVariants}
           >
+            {forgotPassword.error instanceof HttpError
+              ? forgotPassword.error.message
+              : "Something went wrong. Please try again."}
+          </motion.p>
+        )}
+
+        {/* Email Field */}
+        <motion.div className="flex flex-col gap-2" variants={itemVariants}>
+          <label
+            htmlFor="email"
+            className="label text-sm font-medium text-[#1F2937]"
+          >
             Email Address
-          </motion.label>
-          <motion.input
+          </label>
+          <input
             id="email"
             type="email"
             placeholder="Enter your email address"
@@ -74,27 +79,20 @@ export default function EnterEmailStep({ setStep }: EnterEmailStepProps) {
             onChange={(e) => setEmail(e.target.value)}
             required
             className="input h-12 border border-[#D1D5DB] rounded-lg px-4 py-2 focus:outline-none focus:border-[#2E9E52] focus:ring-2 focus:ring-[#2E9E52]/20"
-            variants={itemVariants}
-            whileFocus={{ scale: 1.01 }}
           />
-          <motion.span
-            className="text-xs text-[#6B7280]"
-            variants={itemVariants}
-          >
+          <span className="text-xs text-[#6B7280]">
             We'll send a verification code to this email
-          </motion.span>
+          </span>
         </motion.div>
 
         {/* Submit Button */}
         <motion.button
           type="submit"
-          disabled={loading}
+          disabled={forgotPassword.isPending}
           className="mt-4 h-12 bg-[#2E9E52] text-white rounded-lg font-semibold hover:bg-[#248A45] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           variants={itemVariants}
-          whileHover={!loading ? "hover" : {}}
-          animate={loading ? { opacity: 0.7 } : { opacity: 1 }}
         >
-          {loading ? "Sending OTP..." : "Send OTP"}
+          {forgotPassword.isPending ? "Sending OTP…" : "Send OTP"}
         </motion.button>
 
         {/* Back to Login */}

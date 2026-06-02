@@ -1,12 +1,14 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useLogin } from "@/lib/hooks/useAuth";
+import { HttpError } from "@/lib/types/api.types";
 
 interface LoginFormProps {
-  setAuthStep: Dispatch<SetStateAction<"login" | "signup" | "details">>;
+  setAuthStep: Dispatch<SetStateAction<"login" | "signup">>;
 }
 
 const containerVariants = {
@@ -25,7 +27,15 @@ const itemVariants = {
 };
 
 export default function LoginForm({ setAuthStep }: LoginFormProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
+  const login = useLogin();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    login.mutate({ email, password });
+  };
 
   return (
     <motion.div
@@ -56,7 +66,20 @@ export default function LoginForm({ setAuthStep }: LoginFormProps) {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
+          onSubmit={handleSubmit}
         >
+          {/* API error */}
+          {login.error && (
+            <motion.p
+              className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+              variants={itemVariants}
+            >
+              {login.error instanceof HttpError
+                ? login.error.message
+                : "Something went wrong. Please try again."}
+            </motion.p>
+          )}
+
           {/* Email */}
           <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
             <label htmlFor="login-email" className="label">
@@ -66,6 +89,9 @@ export default function LoginForm({ setAuthStep }: LoginFormProps) {
               id="login-email"
               type="email"
               placeholder="Enter email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="input h-12"
             />
           </motion.div>
@@ -88,6 +114,9 @@ export default function LoginForm({ setAuthStep }: LoginFormProps) {
               id="login-password"
               type="password"
               placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               className="input h-12"
             />
           </motion.div>
@@ -96,11 +125,12 @@ export default function LoginForm({ setAuthStep }: LoginFormProps) {
           <motion.div className="flex flex-col gap-3 pt-1" variants={itemVariants}>
             <motion.button
               type="submit"
-              className="btn-primary w-full"
+              disabled={login.isPending}
+              className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
               whileHover={{ scale: 0.99 }}
               whileTap={{ scale: 0.97 }}
             >
-              Sign in
+              {login.isPending ? "Signing in…" : "Sign in"}
             </motion.button>
 
             <div className="flex items-center gap-3">

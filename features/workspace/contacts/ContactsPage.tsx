@@ -81,9 +81,9 @@ export default function ContactsPage() {
       </div>
 
       {/* Search + stage filters */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center gap-3">
         {/* Search */}
-        <div className="relative" style={{ width: 320 }}>
+        <div className="relative shrink-0" style={{ width: 240 }}>
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
@@ -113,12 +113,12 @@ export default function ContactsPage() {
         </button>
 
         {/* Stage pills */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
           {filterStages.map((stage) => (
             <button
               key={stage}
               onClick={() => setActiveFilter(stage)}
-              className="rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-150"
+              className="rounded-full px-4 py-1.5 text-sm font-medium transition-colors text-[12px] duration-150"
               style={
                 activeFilter === stage
                   ? { backgroundColor: '#2E9E52', color: '#ffffff', border: '1px solid #2E9E52' }

@@ -6,15 +6,18 @@ import RecentActivity from '@/features/workspace/dashboard/RecentActivity'
 import TeamPerformanceChart from '@/features/workspace/dashboard/TeamPerformanceChart'
 import UpcomingFollowUps from '@/features/workspace/dashboard/UpcomingFollowUps'
 import RecentContacts from '@/features/workspace/dashboard/RecentContacts'
+import { useAuthStore } from '@/lib/stores/auth.store'
 
 export default function Dashboard() {
+  const user = useAuthStore((state) => state.user)
+  const email = user?.email 
   return (
     <div className="p-6 flex flex-col gap-5">
       {/* Welcome header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="font-bold" style={{ fontSize: 26, color: '#111827' }}>
-            Welcome back, Pastor James
+            Welcome back, {email}
           </h1>
           <p style={{ fontSize: 14, color: '#6b7280' }}>
             Here&apos;s what&apos;s happening in the Grace workspace today.
