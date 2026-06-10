@@ -16,11 +16,20 @@ export async function resolveWorkspaces(
   token: string,
   router: ReturnType<typeof useRouter>,
 ) {
-  const [owned, joined] = await Promise.all([
+  const [ownedResult, joinedResult] = await Promise.allSettled([
     workspaceRepository.getOwned(token),
     workspaceRepository.getJoined(token),
   ])
-  const all = [...owned.data, ...joined.data]
+
+  const ownedData = ownedResult.status === 'fulfilled' ? (ownedResult.value.data ?? []) : []
+  const joinedData = joinedResult.status === 'fulfilled' ? (joinedResult.value.data ?? []) : []
+
+  // Both failed — surface the error so the caller can show a toast
+  if (ownedResult.status === 'rejected' && joinedResult.status === 'rejected') {
+    throw ownedResult.reason
+  }
+
+  const all = [...ownedData, ...joinedData]
 
   if (all.length === 0) {
     router.push('/auth/details')
