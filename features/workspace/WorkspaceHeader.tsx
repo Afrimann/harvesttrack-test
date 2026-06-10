@@ -1,6 +1,7 @@
 "use client";
 
-import { useAuthStore } from "@/lib/stores/auth.store";
+import { useUserStore } from "@/lib/stores/user.store";
+import { useUIStore } from "@/lib/stores/ui.store";
 import { PanelLeft, Bell, Plus, Search } from "lucide-react";
 
 interface WorkspaceHeaderProps {
@@ -12,7 +13,8 @@ export default function WorkspaceHeader({
   sidebarOpen,
   onToggle,
 }: WorkspaceHeaderProps) {
-  const user = useAuthStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
+  const openContactModal = useUIStore((state) => state.openContactModal);
   const initials = user?.email
     ? user.email
         .split("@")[0]
@@ -76,6 +78,7 @@ export default function WorkspaceHeader({
       <div className="flex items-center gap-2 ml-auto flex-shrink-0">
         {/* New contact button */}
         <button
+          onClick={openContactModal}
           className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-white transition-all duration-150"
           style={{ backgroundColor: "#2E9E52", fontSize: 14 }}
           onMouseEnter={(e) =>

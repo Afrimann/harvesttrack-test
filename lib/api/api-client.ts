@@ -27,18 +27,23 @@ export async function apiRequest<T>(
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     method,
     headers,
+    credentials: 'include',
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 
   if (!response.ok) {
     let message = `Request failed with status ${response.status}`
+    let error: string | undefined
+    let code: string | undefined
     try {
       const errorBody = await response.json()
-      message = errorBody.message ?? errorBody.detail ?? message
+      message = errorBody.message ?? message
+      error = errorBody.error
+      code = errorBody.code
     } catch {
       // keep default message
     }
-    throw new HttpError(message, response.status)
+    throw new HttpError(message, response.status, error, code)
   }
 
   if (response.status === 204) {

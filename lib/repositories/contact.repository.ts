@@ -1,32 +1,34 @@
-import { apiRequest } from '@/app/lib/api/api-client'
+import { apiRequest } from '@/lib/api/api-client'
 import type {
-  Contact,
   ContactsResponse,
   CreateContactRequest,
+  CreateContactResponse,
 } from '@/lib/types/contact.types'
 
-interface GetContactsParams {
-  stage?: string
-  search?: string
-  page?: number
-}
-
 export const contactRepository = {
-  getContacts: (token: string, params?: GetContactsParams) => {
-    const query = new URLSearchParams()
-    if (params?.stage) query.set('stage', params.stage)
-    if (params?.search) query.set('search', params.search)
-    if (params?.page) query.set('page', String(params.page))
-    const qs = query.toString()
-    return apiRequest<ContactsResponse>(`/api/contacts${qs ? `?${qs}` : ''}`, { token })
-  },
+  getContacts: (workspaceId: string, token: string) =>
+    apiRequest<ContactsResponse>(`/api/workspaces/${workspaceId}/contacts`, { token }),
 
-  createContact: (data: CreateContactRequest, token: string) =>
-    apiRequest<Contact>('/api/contacts', { method: 'POST', body: data, token }),
+  getContactById: (workspaceId: string, contactId: string, token: string) =>
+    apiRequest<CreateContactResponse>(`/api/workspaces/${workspaceId}/contacts/${contactId}`, { token }),
 
-  updateContact: (id: string, data: Partial<CreateContactRequest>, token: string) =>
-    apiRequest<Contact>(`/api/contacts/${id}`, { method: 'PATCH', body: data, token }),
+  createContact: (workspaceId: string, data: CreateContactRequest, token: string) =>
+    apiRequest<CreateContactResponse>(`/api/workspaces/${workspaceId}/contacts`, {
+      method: 'POST',
+      body: data,
+      token,
+    }),
 
-  deleteContact: (id: string, token: string) =>
-    apiRequest<void>(`/api/contacts/${id}`, { method: 'DELETE', token }),
+  updateContact: (workspaceId: string, contactId: string, data: Partial<CreateContactRequest>, token: string) =>
+    apiRequest<CreateContactResponse>(`/api/workspaces/${workspaceId}/contacts/${contactId}`, {
+      method: 'PATCH',
+      body: data,
+      token,
+    }),
+
+  removeContact: (workspaceId: string, contactId: string, token: string) =>
+    apiRequest<void>(`/api/workspaces/${workspaceId}/contacts/${contactId}`, {
+      method: 'DELETE',
+      token,
+    }),
 }

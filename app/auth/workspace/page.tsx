@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useUserDetails } from "@/lib/hooks/useAuth";
+import { useWorkspaceSetup } from "@/lib/hooks/useAuth";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -15,28 +15,14 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
-export default function DetailsPage() {
+export default function WorkspacePage() {
   const router = useRouter();
-  const [accountType, setAccountType] = useState<"Personal" | "Church">("Personal");
-  const [formData, setFormData] = useState({
-    username: "",
-    phoneNumber: "",
-  });
-  const userDetails = useUserDetails();
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }
-  
+  const [name, setName] = useState("");
+  const workspaceSetup = useWorkspaceSetup();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    userDetails.mutate({
-      username: formData.username,
-      phoneNumber: formData.phoneNumber,
-      accountType: accountType === "Personal" ? "TYPE_1" : "TYPE_2",
-    });
+    workspaceSetup.mutate({ name });
   }
 
   return (
@@ -72,18 +58,20 @@ export default function DetailsPage() {
               ✓
             </span>
             <div className="flex-1 h-1 rounded-full" style={{ backgroundColor: "#e8f5ee" }}>
-              <div className="h-full w-1/2 rounded-full" style={{ backgroundColor: "#2E9E52" }} />
+              <div className="h-full w-full rounded-full" style={{ backgroundColor: "#2E9E52" }} />
             </div>
             <span
               className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
               style={{ backgroundColor: "#2E9E52" }}
             >
-              2
+              ✓
             </span>
-            <div className="flex-1 h-1 rounded-full" style={{ backgroundColor: "#e5e7eb" }} />
+            <div className="flex-1 h-1 rounded-full" style={{ backgroundColor: "#e8f5ee" }}>
+              <div className="h-full w-full rounded-full" style={{ backgroundColor: "#2E9E52" }} />
+            </div>
             <span
-              className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
-              style={{ backgroundColor: "#f3f4f6", color: "#9ca3af" }}
+              className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+              style={{ backgroundColor: "#2E9E52" }}
             >
               3
             </span>
@@ -96,10 +84,10 @@ export default function DetailsPage() {
             className="mb-6"
           >
             <h1 className="text-2xl font-semibold text-gray-900">
-              Set up your workspace
+              Name your workspace
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              Just a few more details to get you started.
+              This is how your workspace will appear to your team.
             </p>
           </motion.div>
 
@@ -110,77 +98,39 @@ export default function DetailsPage() {
             animate="visible"
             onSubmit={handleSubmit}
           >
-            {/* Full name */}
             <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
-              <label htmlFor="username" className="label">Username</label>
+              <label htmlFor="name" className="label">Workspace name</label>
               <input
-                id="username"
-                name="username"
+                id="name"
+                name="name"
                 type="text"
-                placeholder="Enter your username"
-                value={formData.username}
-                onChange={handleChange}
+                placeholder="e.g. Grace Community Church"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
                 className="input h-12"
               />
-            </motion.div>
-
-            {/* Phone */}
-            <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
-              <label htmlFor="phoneNumber" className="label">Phone number</label>
-              <input
-                id="phoneNumber"
-                name="phoneNumber"
-                type="tel"
-                placeholder="+234 90 XXX XXXX"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                required
-                className="input h-12"
-              />
-            </motion.div>
-
-            {/* Account type */}
-            <motion.div className="flex flex-col gap-2" variants={itemVariants}>
-              <p className="label">Account type</p>
-              <div className="grid grid-cols-2 gap-2" role="group">
-                {(["Personal", "Church"] as const).map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    aria-pressed={accountType === type}
-                    onClick={() => setAccountType(type)}
-                    className={`py-2.5 rounded-xl text-sm font-semibold transition-all duration-150 ${
-                      accountType === type
-                        ? "bg-[#2E9E52] text-white shadow-sm"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
             </motion.div>
 
             <motion.button
               type="submit"
-              disabled={userDetails.isPending}
+              disabled={workspaceSetup.isPending}
               className="btn-primary w-full mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
               variants={itemVariants}
               whileHover={{ scale: 0.99 }}
               whileTap={{ scale: 0.97 }}
             >
-              {userDetails.isPending ? "Saving…" : "Continue"}
+              {workspaceSetup.isPending ? "Saving…" : "Continue"}
             </motion.button>
           </motion.form>
 
           <p className="mt-5 text-center text-sm text-gray-400">
-            Need to log out?{" "}
+            Need to go back?{" "}
             <button
-              onClick={() => router.push("/auth")}
+              onClick={() => router.push("/auth/details")}
               className="text-[#2E9E52] font-semibold hover:underline"
             >
-              Back to login
+              Previous step
             </button>
           </p>
         </div>

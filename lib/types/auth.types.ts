@@ -1,6 +1,6 @@
 export type ApiResponse<T> = {
   success: boolean
-  message: string
+  message?: string
   data: T
 }
 
@@ -11,8 +11,12 @@ export type User = {
   emailVerified: string | null
   fullName?: string
   phoneNumber?: string
-  accountType?: 'Personal' | 'Church'
+  accountType?: 'TYPE_1' | 'TYPE_2'
   workspaceName?: string
+  image?: string | null
+  gender?: 0 | 1 | 2
+  createdAt: string
+  updatedAt: string
 }
 
 export type SignupRequest = {
@@ -22,7 +26,7 @@ export type SignupRequest = {
 
 export type SignupResponse = {
   success: boolean
-  user: User
+  data: User
 }
 
 export type LoginRequest = {
@@ -32,15 +36,40 @@ export type LoginRequest = {
 
 export type LoginResponse = {
   success: boolean
-  user: User
-  access_token: string
+  data: User
+  token: string
 }
 
-export type UserDetailsRequest = {
-  fullName: string
+export type UserDetailsRequest = Partial<{
+  username: string
   phoneNumber: string
-  accountType: 'Personal' | 'Church'
-  workspaceName: string
+  accountType: 'TYPE_1' | 'TYPE_2'
+  image: string
+  gender: 0 | 1 | 2
+}>
+
+export type UserDetailsResponse = {
+  data: User
+}
+
+export type WorkspaceSetup = {
+  name: string
+}
+
+export type Workspace = {
+  id: string
+  name: string
+  ownerId: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type WorkspaceSetupResponse = {
+  data: Workspace
+}
+
+export type WorkspaceListResponse = {
+  data: Workspace[]
 }
 
 export type ForgotPasswordRequest = {
@@ -65,6 +94,6 @@ export type MessageResponse = {
 
 export type VerifyEmailResponse = {
   success: boolean
-  user: User
+  data: User
   token: string
 }

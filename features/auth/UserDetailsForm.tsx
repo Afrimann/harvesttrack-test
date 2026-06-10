@@ -26,10 +26,10 @@ const itemVariants = {
 
 export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
   const [accountType, setAccountType] = useState<"Personal" | "Church">("Personal");
+  const accountTypeMap = { Personal: "TYPE_1", Church: "TYPE_2" } as const;
   const [formData, setFormData] = useState({
-    fullName: "",
+    username: "",
     phoneNumber: "",
-    workspaceName: "",
   });
   const userDetails = useUserDetails();
 
@@ -41,10 +41,9 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     userDetails.mutate({
-      fullName: formData.fullName,
+      username: formData.username,
       phoneNumber: formData.phoneNumber,
-      accountType,
-      workspaceName: formData.workspaceName,
+      accountType: accountTypeMap[accountType],
     });
   }
 
@@ -93,15 +92,15 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
 
           {/* Full name */}
           <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
-            <label htmlFor="fullName" className="label">
+            <label htmlFor="username" className="label">
               Name
             </label>
             <input
-              id="fullName"
-              name="fullName"
+              id="username"
+              name="username"
               type="text"
               placeholder="Enter your full name"
-              value={formData.fullName}
+              value={formData.username}
               onChange={handleInputChange}
               required
               className="input h-12"
@@ -149,23 +148,6 @@ export default function UserDetailsForm({ setAuthStep }: UserDetailsFormProps) {
                 </button>
               ))}
             </div>
-          </motion.div>
-
-          {/* Workspace name */}
-          <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
-            <label htmlFor="workspaceName" className="label">
-              Workspace name
-            </label>
-            <input
-              id="workspaceName"
-              name="workspaceName"
-              type="text"
-              placeholder="Your organisation or church name"
-              value={formData.workspaceName}
-              onChange={handleInputChange}
-              required
-              className="input h-12"
-            />
           </motion.div>
 
           {/* Submit */}

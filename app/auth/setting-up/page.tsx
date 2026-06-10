@@ -54,7 +54,10 @@ export default function SettingUpPage() {
 
     const elapsed = Date.now() - startRef.current;
     const remaining = Math.max(0, MIN_MS - elapsed);
-    const t = setTimeout(() => router.push("/workspace/dashboard"), remaining);
+    const t = setTimeout(() => {
+      document.cookie = 'onboarding_done=1; path=/; max-age=31536000; SameSite=Lax'
+      router.push("/workspace/dashboard")
+    }, remaining);
     return () => clearTimeout(t);
   }, [completedSteps, router]);
 

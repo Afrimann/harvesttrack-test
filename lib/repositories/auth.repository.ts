@@ -1,16 +1,19 @@
-import { apiRequest } from "@/app/lib/api/api-client";
+import { apiRequest } from "@/lib/api/api-client";
 import type {
   SignupRequest,
   SignupResponse,
   LoginRequest,
   LoginResponse,
   UserDetailsRequest,
+  UserDetailsResponse,
   User,
   ForgotPasswordRequest,
   VerifyOTPRequest,
   ResetPasswordRequest,
   MessageResponse,
   VerifyEmailResponse,
+  WorkspaceSetup,
+  WorkspaceSetupResponse,
 } from "@/lib/types/auth.types";
 
 export const authRepository = {
@@ -29,10 +32,13 @@ export const authRepository = {
   me: (token: string) => apiRequest<User>("/api/auth/me", { token }),
 
   updateProfile: (data: UserDetailsRequest, token: string) =>
-    apiRequest<User>("/api/users/me", { method: "PATCH", body: data, token }),
+    apiRequest<UserDetailsResponse>("/api/users/me", { method: "PATCH", body: data, token }),
 
-  logout: (token: string) =>
-    apiRequest<void>("/api/auth/logout", { method: "POST", token }),
+  workspaceSetup: (data: WorkspaceSetup, token: string) =>
+    apiRequest<WorkspaceSetupResponse>("/api/workspaces", { method: "POST", body: data, token }),
+
+  logout: () =>
+    apiRequest<void>("/api/auth/logout", { method: "POST"}),
 
   forgotPassword: (data: ForgotPasswordRequest) =>
     apiRequest<MessageResponse>("/api/auth/forgot-password", {

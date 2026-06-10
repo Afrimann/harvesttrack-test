@@ -1,14 +1,11 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useSignup } from "@/lib/hooks/useAuth";
+import OAuthButtons from "@/features/auth/OAuthButtons";
 import { HttpError } from "@/lib/types/api.types";
-
-interface RegistrationFormProps {
-  setAuthStep: Dispatch<SetStateAction<"login" | "signup">>;
-}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -16,16 +13,14 @@ const containerVariants = {
     opacity: 1,
     transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
-  exit: { opacity: 0 },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 12 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  exit: { opacity: 0, y: -12, transition: { duration: 0.2 } },
 };
 
-export default function RegistrationForm({ setAuthStep }: RegistrationFormProps) {
+export default function RegistrationForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const signup = useSignup();
@@ -38,12 +33,11 @@ export default function RegistrationForm({ setAuthStep }: RegistrationFormProps)
   return (
     <motion.div
       className="w-full max-w-130"
-      initial={{ x: 60, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: -60, opacity: 0 }}
-      transition={{ duration: 0.35, ease: "easeInOut" }}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
     >
-      <motion.div className="bg-white lg:shadow-[0_20px_60px_rgba(0,0,0,0.08)] px-4 py-6 lg:px-8" layout>
+      <div className="bg-white lg:shadow-[0_20px_60px_rgba(0,0,0,0.08)] px-4 py-6 lg:px-8">
         {/* Header */}
         <motion.div
           className="mb-6"
@@ -128,18 +122,7 @@ export default function RegistrationForm({ setAuthStep }: RegistrationFormProps)
               <div className="h-px flex-1 bg-gray-200" />
             </div>
 
-            <motion.button
-              type="button"
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl
-                         hover:bg-gray-50 hover:border-gray-300
-                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E9E52]/40
-                         transition-all duration-200 shadow-sm"
-              whileHover={{ y: -2 }}
-              whileTap={{ y: 0 }}
-            >
-              <FcGoogle className="text-xl shrink-0" />
-              Continue with Google
-            </motion.button>
+            <OAuthButtons />
           </motion.div>
         </motion.form>
 
@@ -151,14 +134,14 @@ export default function RegistrationForm({ setAuthStep }: RegistrationFormProps)
           animate="visible"
         >
           Already have an account?{" "}
-          <button
-            onClick={() => setAuthStep("login")}
+          <Link
+            href="/auth/login"
             className="text-[#2E9E52] font-semibold hover:underline focus-visible:outline-none"
           >
             Log in
-          </button>
+          </Link>
         </motion.p>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

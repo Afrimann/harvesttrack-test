@@ -9,28 +9,36 @@ export type ContactSource = 'QR' | 'MANUAL' | 'IMPORT' | 'EVENT'
 
 export interface Contact {
   id: string
-  initials: string
-  name: string
-  phone: string
-  stage: ContactStage
-  source: ContactSource
-  evangelist: string
-  lastInteraction: string
   workspaceId: string
+  firstName: string
+  lastName?: string
+  email?: string
+  phone?: string
+  country?: string
+  city?: string
+  state?: string
+  zip?: string
+  address?: string
   createdAt: string
+  updatedAt: string
 }
 
 export interface CreateContactRequest {
-  name: string
-  phone: string
-  stage: ContactStage
-  source: ContactSource
-  evangelistId?: string
+  firstName: string
+  lastName?: string
+  email?: string
+  phone?: string
+  country?: string
+  city?: string
+  state?: string
+  zip?: string
+  address?: string
+}
+
+export interface CreateContactResponse {
+  data: Contact
 }
 
 export interface ContactsResponse {
-  contacts: Contact[]
-  total: number
-  page: number
-  pageSize: number
+  data: Contact[]
 }
