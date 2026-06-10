@@ -19,7 +19,7 @@ export function useContact(contactId: string) {
 
   return useQuery({
     queryKey: ['contacts', workspace?.id, contactId],
-    queryFn: () => contactRepository.getContactById(workspace!.id, contactId, accessToken!),
+    queryFn: () => contactRepository.getContactById(workspace!.id, contactId, useAuthStore.getState().accessToken!),
     enabled: !!accessToken && !!workspace?.id && !!contactId,
     staleTime: 2 * 60 * 1000,
   })
@@ -31,21 +31,22 @@ export function useContacts() {
 
   return useQuery({
     queryKey: ['contacts', workspace?.id],
-    queryFn: () => contactRepository.getContacts(workspace!.id, accessToken!),
+    queryFn: () => contactRepository.getContacts(workspace!.id, useAuthStore.getState().accessToken!),
     enabled: !!accessToken && !!workspace?.id,
     staleTime: 2 * 60 * 1000,
   })
 }
 
 export function useCreateContact() {
-  const { accessToken } = useAuthStore()
   const workspace = useWorkspaceStore((state) => state.workspace)
   const closeContactModal = useUIStore((state) => state.closeContactModal)
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: CreateContactRequest) =>
-      contactRepository.createContact(workspace!.id, data, accessToken!),
+    mutationFn: (data: CreateContactRequest) => {
+      const { accessToken } = useAuthStore.getState()
+      return contactRepository.createContact(workspace!.id, data, accessToken!)
+    },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['contacts', workspace?.id] })
       const name = [response.data.firstName, response.data.lastName].filter(Boolean).join(' ')
@@ -59,14 +60,15 @@ export function useCreateContact() {
 }
 
 export function useUpdateContact() {
-  const { accessToken } = useAuthStore()
   const workspace = useWorkspaceStore((state) => state.workspace)
   const closeEditContact = useUIStore((state) => state.closeEditContact)
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<CreateContactRequest> }) =>
-      contactRepository.updateContact(workspace!.id, id, data, accessToken!),
+    mutationFn: ({ id, data }: { id: string; data: Partial<CreateContactRequest> }) => {
+      const { accessToken } = useAuthStore.getState()
+      return contactRepository.updateContact(workspace!.id, id, data, accessToken!)
+    },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['contacts', workspace?.id] })
       const name = [response.data.firstName, response.data.lastName].filter(Boolean).join(' ')
@@ -80,13 +82,14 @@ export function useUpdateContact() {
 }
 
 export function useDeleteContact() {
-  const { accessToken } = useAuthStore()
   const workspace = useWorkspaceStore((state) => state.workspace)
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (contactId: string) =>
-      contactRepository.removeContact(workspace!.id, contactId, accessToken!),
+    mutationFn: (contactId: string) => {
+      const { accessToken } = useAuthStore.getState()
+      return contactRepository.removeContact(workspace!.id, contactId, accessToken!)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contacts', workspace?.id] })
       toast.success('Contact deleted.')

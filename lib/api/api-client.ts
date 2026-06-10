@@ -27,6 +27,7 @@ export async function apiRequest<T>(
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     method,
     headers,
+    credentials: 'include',
     body: body !== undefined ? JSON.stringify(body) : undefined,
   })
 
