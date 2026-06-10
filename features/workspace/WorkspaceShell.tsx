@@ -12,9 +12,21 @@ export default function WorkspaceShell({ children }: { children: React.ReactNode
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [hasMounted, setHasMounted] = useState(false)
+  const [storeHydrated, setStoreHydrated] = useState(false)
   const { isAuthenticated } = useAuthStore()
   const router = useRouter()
   const pathname = usePathname()
+
+  // Wait for Zustand persist to finish reading from localStorage before
+  // making any auth decisions — prevents false redirects on mobile where
+  // localStorage reads are slower than the component mount.
+  useEffect(() => {
+    if (useAuthStore.persist.hasHydrated()) {
+      setStoreHydrated(true)
+      return
+    }
+    return useAuthStore.persist.onFinishHydration(() => setStoreHydrated(true))
+  }, [])
 
   useEffect(() => {
     setHasMounted(true)
@@ -37,12 +49,12 @@ export default function WorkspaceShell({ children }: { children: React.ReactNode
   }, [pathname, isMobile])
 
   useEffect(() => {
-    if (hasMounted && !isAuthenticated) {
+    if (hasMounted && storeHydrated && !isAuthenticated) {
       router.replace('/auth')
     }
-  }, [hasMounted, isAuthenticated, router])
+  }, [hasMounted, storeHydrated, isAuthenticated, router])
 
-  if (!hasMounted || !isAuthenticated) return null
+  if (!hasMounted || !storeHydrated || !isAuthenticated) return null
 
   return (
     <div className="flex h-screen overflow-hidden">
