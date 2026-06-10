@@ -25,13 +25,13 @@ export default function UpcomingFollowUps() {
             className="flex items-center justify-between rounded-xl px-4 py-3"
             style={{ border: '1px solid #f3f4f6' }}
           >
-            <div>
-              <p className="font-semibold" style={{ fontSize: 14, color: '#111827' }}>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold truncate" style={{ fontSize: 14, color: '#111827' }}>
                 {item.task}
               </p>
-              <p style={{ fontSize: 13, color: '#2E9E52' }}>{item.person}</p>
+              <p className="truncate" style={{ fontSize: 13, color: '#2E9E52' }}>{item.person}</p>
             </div>
-            <p className="font-medium flex-shrink-0 ml-4" style={{ fontSize: 13, color: '#9ca3af' }}>
+            <p className="font-medium shrink-0 ml-4" style={{ fontSize: 13, color: '#9ca3af' }}>
               {item.date}
             </p>
           </div>

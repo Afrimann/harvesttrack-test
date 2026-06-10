@@ -145,7 +145,7 @@ export default function NewContactModal() {
                 <div className="px-6 py-5 flex flex-col gap-5">
 
                   {/* Name row */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6b7280' }}>
                         First name <span style={{ color: '#ef4444' }}>*</span>
@@ -173,7 +173,7 @@ export default function NewContactModal() {
                   </div>
 
                   {/* Phone + Email */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6b7280' }}>
                         Phone
@@ -214,7 +214,7 @@ export default function NewContactModal() {
                       onChange={(e) => patch('address', e.target.value)}
                     />
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <Input
                         type="text"
                         placeholder="City"
@@ -229,7 +229,7 @@ export default function NewContactModal() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <Input
                         type="text"
                         placeholder="ZIP / Postal code"

@@ -153,7 +153,7 @@ export default function EditContactModal() {
               <form onSubmit={handleSubmit} className="flex flex-col overflow-y-auto">
                 <div className="px-6 py-5 flex flex-col gap-5">
                   {/* Name */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6b7280' }}>
                         First name <span style={{ color: '#ef4444' }}>*</span>
@@ -181,7 +181,7 @@ export default function EditContactModal() {
                   </div>
 
                   {/* Phone + Email */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1.5">
                       <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: '#6b7280' }}>
                         Phone
@@ -220,7 +220,7 @@ export default function EditContactModal() {
                       value={form.address}
                       onChange={(e) => patch('address', e.target.value)}
                     />
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <Input
                         type="text"
                         placeholder="City"
@@ -234,7 +234,7 @@ export default function EditContactModal() {
                         onChange={(e) => patch('state', e.target.value)}
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <Input
                         type="text"
                         placeholder="ZIP / Postal code"

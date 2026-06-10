@@ -61,7 +61,6 @@ export function useUserDetails() {
   return useMutation({
     mutationFn: (data: UserDetailsRequest) => authRepository.updateProfile(data, accessToken!),
     onSuccess: (response) => {
-      console.log(response);
       useUserStore.getState().setUser(response.data)
       router.push('/auth/workspace')
     },

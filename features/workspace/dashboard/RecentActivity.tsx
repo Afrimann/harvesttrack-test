@@ -41,7 +41,7 @@ export default function RecentActivity() {
       <div className="flex flex-col gap-0">
         {activities.map((item, i) => (
           <div key={i} className="flex gap-3 py-3" style={{ borderBottom: i < activities.length - 1 ? '1px solid #f9fafb' : 'none' }}>
-            <div className="flex-shrink-0 mt-1">
+            <div className="shrink-0 mt-1">
               <span
                 className="block rounded-full"
                 style={{ width: 8, height: 8, backgroundColor: '#2E9E52' }}

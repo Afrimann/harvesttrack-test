@@ -1,4 +1,3 @@
-
 import { ArrowUpRight } from 'lucide-react'
 
 type StatusType = 'New Contact' | 'Contacted' | 'Interested'
@@ -13,12 +12,12 @@ interface Contact {
 }
 
 const contacts: Contact[] = [
-  { initials: 'AO', name: 'Amara Okafor', phone: '+254 709360662', city: 'Nairobi', status: 'New Contact', timeAgo: 'about 2 months ago' },
-  { initials: 'DM', name: 'David Mensah', phone: '+254 733573129', city: 'Accra', status: 'New Contact', timeAgo: '5 days ago' },
-  { initials: 'GM', name: 'Grace Mwangi', phone: '+254 705734339', city: 'Lagos', status: 'Contacted', timeAgo: '20 days ago' },
-  { initials: 'JB', name: 'Joseph Banda', phone: '+254 788627227', city: 'Kampala', status: 'Contacted', timeAgo: '3 days ago' },
-  { initials: 'EA', name: 'Esther Adeyemi', phone: '+254 710829951', city: 'Lusaka', status: 'Interested', timeAgo: 'about 2 months ago' },
-  { initials: 'SN', name: 'Samuel Nkomo', phone: '+254 748823568', city: 'Kigali', status: 'Interested', timeAgo: '6 days ago' },
+  { initials: 'AO', name: 'Amara Okafor',   phone: '+254 709360662', city: 'Nairobi',  status: 'New Contact', timeAgo: 'about 2 months ago' },
+  { initials: 'DM', name: 'David Mensah',   phone: '+254 733573129', city: 'Accra',    status: 'New Contact', timeAgo: '5 days ago' },
+  { initials: 'GM', name: 'Grace Mwangi',   phone: '+254 705734339', city: 'Lagos',    status: 'Contacted',   timeAgo: '20 days ago' },
+  { initials: 'JB', name: 'Joseph Banda',   phone: '+254 788627227', city: 'Kampala',  status: 'Contacted',   timeAgo: '3 days ago' },
+  { initials: 'EA', name: 'Esther Adeyemi', phone: '+254 710829951', city: 'Lusaka',   status: 'Interested',  timeAgo: 'about 2 months ago' },
+  { initials: 'SN', name: 'Samuel Nkomo',   phone: '+254 748823568', city: 'Kigali',   status: 'Interested',  timeAgo: '6 days ago' },
 ]
 
 const statusStyles: Record<StatusType, { bg: string; dot: string; text: string }> = {
@@ -38,41 +37,56 @@ export default function RecentContacts() {
           View all <ArrowUpRight size={14} />
         </button>
       </div>
+
       <div>
         {contacts.map((c, i) => {
           const s = statusStyles[c.status]
           return (
             <div
               key={i}
-              className="flex items-center gap-4 px-5 py-4 transition-colors duration-150 cursor-pointer hover:bg-gray-50"
+              className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 transition-colors duration-150 cursor-pointer hover:bg-gray-50"
               style={{ borderBottom: i < contacts.length - 1 ? '1px solid #f9fafb' : 'none' }}
             >
               {/* Avatar */}
               <div
                 className="flex items-center justify-center rounded-full font-bold shrink-0"
-                style={{ width: 40, height: 40, backgroundColor: '#e8f5ee', color: '#2E9E52', fontSize: 13 }}
+                style={{ width: 38, height: 38, backgroundColor: '#e8f5ee', color: '#2E9E52', fontSize: 12 }}
               >
                 {c.initials}
               </div>
 
-              {/* Name + contact */}
+              {/* Name + contact info + mobile status */}
               <div className="flex-1 min-w-0">
-                <p className="font-semibold" style={{ fontSize: 14, color: '#111827' }}>
+                <p className="font-semibold truncate" style={{ fontSize: 14, color: '#111827' }}>
                   {c.name}
                 </p>
-                <p style={{ fontSize: 13, color: '#6b7280' }}>
-                  {c.phone} · {c.city}
+                <p className="truncate" style={{ fontSize: 13, color: '#6b7280' }}>
+                  {c.phone}
+                  <span className="hidden sm:inline"> · {c.city}</span>
                 </p>
+                {/* Status pill on mobile only */}
+                <div className="mt-1 sm:hidden">
+                  <span
+                    className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-medium"
+                    style={{ backgroundColor: s.bg, color: s.text, fontSize: 11 }}
+                  >
+                    <span
+                      className="rounded-full shrink-0"
+                      style={{ width: 5, height: 5, backgroundColor: s.dot, display: 'inline-block' }}
+                    />
+                    {c.status}
+                  </span>
+                </div>
               </div>
 
-              {/* Status + time */}
-              <div className="flex items-center gap-4 shrink-0">
+              {/* Status + time — desktop only */}
+              <div className="hidden sm:flex items-center gap-4 shrink-0">
                 <span
                   className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-medium"
                   style={{ backgroundColor: s.bg, color: s.text, fontSize: 12 }}
                 >
                   <span
-                    className="rounded-full"
+                    className="rounded-full shrink-0"
                     style={{ width: 6, height: 6, backgroundColor: s.dot, display: 'inline-block' }}
                   />
                   {c.status}
@@ -81,6 +95,11 @@ export default function RecentContacts() {
                   {c.timeAgo}
                 </p>
               </div>
+
+              {/* Time — mobile only (no status, just time) */}
+              <p className="sm:hidden shrink-0 text-right" style={{ fontSize: 12, color: '#9ca3af' }}>
+                {c.timeAgo}
+              </p>
             </div>
           )
         })}

@@ -66,9 +66,10 @@ const navSections: NavSection[] = [
 
 interface SidebarProps {
   isOpen: boolean
+  onClose?: () => void
 }
 
-export default function Sidebar({ isOpen }: SidebarProps) {
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const workspace = useWorkspaceStore((state) => state.workspace)
@@ -199,6 +200,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   title={!isOpen ? item.label : undefined}
+                  onClick={onClose}
                   className="flex items-center gap-3 rounded-lg px-3 py-2 mb-0.5 transition-colors duration-150"
                   style={{
                     backgroundColor: isActive ? '#1e3d29' : 'transparent',

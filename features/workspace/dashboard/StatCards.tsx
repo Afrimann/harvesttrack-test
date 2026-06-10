@@ -51,28 +51,28 @@ const stats: StatCard[] = [
 
 export default function StatCards() {
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className="bg-white rounded-2xl p-5"
+          className="bg-white rounded-2xl p-4 sm:p-5"
           style={{ border: '1px solid #f0f0f0' }}
         >
           <div className="flex items-start justify-between mb-3">
             <p
-              className="font-semibold tracking-wide"
+              className="font-semibold tracking-wide leading-tight"
               style={{ fontSize: 11, color: '#6b7280', letterSpacing: '0.06em' }}
             >
               {stat.label}
             </p>
             <div
-              className="flex items-center justify-center rounded-xl"
-              style={{ width: 40, height: 40, backgroundColor: stat.iconBg }}
+              className="flex items-center justify-center rounded-xl shrink-0 ml-2"
+              style={{ width: 36, height: 36, backgroundColor: stat.iconBg }}
             >
-              <stat.icon size={20} color={stat.iconColor} />
+              <stat.icon size={18} color={stat.iconColor} />
             </div>
           </div>
-          <p className="font-bold mb-1" style={{ fontSize: 32, color: '#111827', lineHeight: 1 }}>
+          <p className="font-bold mb-1" style={{ fontSize: 28, color: '#111827', lineHeight: 1 }}>
             {stat.value}
           </p>
           <p className="font-medium" style={{ fontSize: 13, color: stat.subtextColor }}>

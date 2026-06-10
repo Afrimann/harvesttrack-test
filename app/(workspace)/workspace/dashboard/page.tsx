@@ -14,11 +14,11 @@ export default function Dashboard() {
   const workspace = useWorkspaceStore((state) => state.workspace)
   const workspaceName = workspace?.name ?? user?.workspaceName
   return (
-    <div className="p-6 flex flex-col gap-5">
+    <div className="p-4 sm:p-6 flex flex-col gap-5">
       {/* Welcome header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-bold" style={{ fontSize: 26, color: '#111827' }}>
+          <h1 className="font-bold text-2xl sm:text-[26px]" style={{ color: '#111827' }}>
             Welcome back, {user?.username || user?.email || 'User'}!
           </h1>
           <p style={{ fontSize: 14, color: '#6b7280' }}>
@@ -26,7 +26,7 @@ export default function Dashboard() {
           </p>
         </div>
         <button
-          className="flex items-center gap-1.5 rounded-xl px-4 py-2.5 font-semibold text-white text-sm transition-colors duration-150 shrink-0 bg-[#2E9E52] hover:bg-[#268a47]"
+          className="md:flex items-center gap-1.5 hidden rounded-xl px-4 py-2.5 font-semibold text-white text-sm trans  ition-colors duration-150 shrink-0 bg-[#2E9E52] hover:bg-[#268a47]"
         >
           <Plus size={16} strokeWidth={2.5} />
           Add contact
@@ -37,13 +37,13 @@ export default function Dashboard() {
       <StatCards />
 
       {/* QR chart + Recent activity */}
-      <div className="grid gap-5" style={{ gridTemplateColumns: '1fr 340px' }}>
+      <div className="grid gap-5 grid-cols-1 lg:grid-cols-[1fr_340px]">
         <QRScansChart />
         <RecentActivity />
       </div>
 
       {/* Team performance + Upcoming follow-ups */}
-      <div className="grid gap-5" style={{ gridTemplateColumns: '1fr 340px' }}>
+      <div className="grid gap-5 grid-cols-1 lg:grid-cols-[1fr_340px]">
         <TeamPerformanceChart />
         <UpcomingFollowUps />
       </div>

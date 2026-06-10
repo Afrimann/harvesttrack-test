@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Search, Filter, Download, Upload, Plus } from 'lucide-react'
+import { toast } from 'sonner'
+import { Search, Filter, Download, Upload, Plus, ChevronDown } from 'lucide-react'
 import {
   Table,
   TableHeader,
@@ -123,16 +124,19 @@ export default function ContactsPage() {
     return contacts.filter((c) => {
       const name = [c.firstName, c.lastName].filter(Boolean).join(' ').toLowerCase()
       const matchesSearch = name.includes(q) || (c.phone ?? '').includes(q)
-      return matchesSearch
+      // contacts currently default to 'New Contact' until API provides a stage field
+      const contactStage: Stage = 'New Contact'
+      const matchesStage = activeFilter === 'All' || activeFilter === contactStage
+      return matchesSearch && matchesStage
     })
-  }, [contacts, search])
+  }, [contacts, search, activeFilter])
 
   return (
-    <div className="p-6 flex flex-col gap-5">
+    <div className="p-4 sm:p-6 flex flex-col gap-5">
       {/* Page header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-bold" style={{ fontSize: 26, color: '#111827' }}>
+          <h1 className="font-bold text-2xl sm:text-[26px]" style={{ color: '#111827' }}>
             Contacts
           </h1>
           <p style={{ fontSize: 14, color: '#6b7280' }}>
@@ -140,17 +144,23 @@ export default function ContactsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <button className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-150">
+          <button
+            onClick={() => toast.info('Export is not available yet.')}
+            className="flex items-center gap-2 rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-150"
+          >
             <Download size={15} />
-            Export
+            <span className="hidden sm:inline">Export</span>
           </button>
-          <button className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-150">
+          <button
+            onClick={() => toast.info('Import is not available yet.')}
+            className="flex items-center gap-2 rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 transition-colors duration-150"
+          >
             <Upload size={15} />
-            Import
+            <span className="hidden sm:inline">Import</span>
           </button>
           <button
             onClick={openContactModal}
-            className="flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-[#2E9E52] hover:bg-[#268a47] transition-colors duration-150"
+            className="flex items-center gap-1.5 rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 text-sm font-semibold text-white bg-[#2E9E52] hover:bg-[#268a47] transition-colors duration-150 whitespace-nowrap shrink-0"
           >
             <Plus size={15} strokeWidth={2.5} />
             New contact
@@ -159,41 +169,70 @@ export default function ContactsPage() {
       </div>
 
       {/* Search + stage filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative shrink-0" style={{ width: 240 }}>
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-            style={{ color: '#9ca3af' }}
-          />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or phone..."
-            className="w-full rounded-full py-2.5 pl-9 pr-4 text-sm outline-none transition-all duration-150 border"
-            style={{
-              backgroundColor: '#f9fafb',
-              borderColor: search ? '#2E9E52' : '#e5e7eb',
-              boxShadow: search ? '0 0 0 3px rgba(46,158,82,0.1)' : 'none',
-            }}
-          />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        {/* Search row — on mobile includes dropdown */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1 sm:flex-none sm:w-60">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ color: '#9ca3af' }}
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by name or phone..."
+              className="w-full rounded-full py-2.5 pl-9 pr-4 text-sm outline-none transition-all duration-150 border"
+              style={{
+                backgroundColor: '#f9fafb',
+                borderColor: search ? '#2E9E52' : '#e5e7eb',
+                boxShadow: search ? '0 0 0 3px rgba(46,158,82,0.1)' : 'none',
+              }}
+            />
+          </div>
+
+          {/* Mobile filter dropdown */}
+          <div className="sm:hidden relative shrink-0">
+            <select
+              value={activeFilter}
+              onChange={(e) => setActiveFilter(e.target.value as StageFilter)}
+              className="appearance-none rounded-full py-2.5 pl-4 pr-8 text-sm font-medium outline-none border transition-all duration-150 cursor-pointer"
+              style={{
+                backgroundColor: activeFilter !== 'All' ? '#e8f5ee' : '#ffffff',
+                borderColor: activeFilter !== 'All' ? '#2E9E52' : '#e5e7eb',
+                color: activeFilter !== 'All' ? '#166534' : '#374151',
+              }}
+            >
+              {filterStages.map((stage) => (
+                <option key={stage} value={stage}>
+                  {stage === 'All' ? 'All stages' : stage}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={14}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ color: activeFilter !== 'All' ? '#2E9E52' : '#9ca3af' }}
+            />
+          </div>
+
+          <button
+            className="hidden sm:flex items-center justify-center rounded-full transition-colors duration-150 shrink-0"
+            style={{ width: 36, height: 36, color: '#6b7280' }}
+            title="Advanced filters"
+          >
+            <Filter size={16} />
+          </button>
         </div>
 
-        <button
-          className="flex items-center justify-center rounded-full transition-colors duration-150"
-          style={{ width: 36, height: 36, color: '#6b7280' }}
-          title="Advanced filters"
-        >
-          <Filter size={16} />
-        </button>
-
-        <div className="flex items-center gap-2">
+        {/* Desktop: pill buttons */}
+        <div className="hidden sm:flex items-center gap-2 flex-wrap">
           {filterStages.map((stage) => (
             <button
               key={stage}
               onClick={() => setActiveFilter(stage)}
-              className="rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-150"
+              className="rounded-full px-4 py-1.5 font-medium transition-colors duration-150 whitespace-nowrap"
               style={
                 activeFilter === stage
                   ? { backgroundColor: '#2E9E52', color: '#ffffff', border: '1px solid #2E9E52', fontSize: 12 }
@@ -206,9 +245,9 @@ export default function ContactsPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #f0f0f0' }}>
-        <Table>
+      {/* Table — horizontal scroll on mobile */}
+      <div className="bg-white rounded-2xl overflow-x-auto" style={{ border: '1px solid #f0f0f0' }}>
+        <Table className="min-w-175">
           <TableHeader style={{ borderColor: '#f3f4f6' }}>
             <TableRow style={{ borderColor: '#f3f4f6' }}>
               {['NAME', 'PHONE', 'STAGE', 'SOURCE', 'EVANGELIST', 'LAST INTERACTION', ''].map((col) => (
@@ -247,7 +286,11 @@ export default function ContactsPage() {
               <TableRow>
                 <TableCell colSpan={6}>
                   <p className="text-center py-12 text-sm" style={{ color: '#9ca3af' }}>
-                    {contacts.length === 0 ? 'No contacts yet. Add your first one.' : 'No contacts match your search.'}
+                    {contacts.length === 0
+                      ? 'No contacts yet. Add your first one.'
+                      : activeFilter !== 'All'
+                        ? `No contacts in the "${activeFilter}" stage.`
+                        : 'No contacts match your search.'}
                   </p>
                 </TableCell>
               </TableRow>
