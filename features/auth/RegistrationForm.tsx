@@ -1,0 +1,147 @@
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useSignup } from "@/lib/hooks/useAuth";
+import OAuthButtons from "@/features/auth/OAuthButtons";
+import { HttpError } from "@/lib/types/api.types";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
+
+export default function RegistrationForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const signup = useSignup();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    signup.mutate({ email, password });
+  };
+
+  return (
+    <motion.div
+      className="w-full max-w-130"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+    >
+      <div className="bg-white lg:shadow-[0_20px_60px_rgba(0,0,0,0.08)] px-4 py-6 lg:px-8">
+        {/* Header */}
+        <motion.div
+          className="mb-6"
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Create your account
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            We&apos;re delighted to have you on board.
+          </p>
+        </motion.div>
+
+        <motion.form
+          className="flex flex-col gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          onSubmit={handleSubmit}
+        >
+          {/* API error */}
+          {signup.error && (
+            <motion.p
+              className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+              variants={itemVariants}
+            >
+              {signup.error instanceof HttpError
+                ? signup.error.message
+                : "Something went wrong. Please try again."}
+            </motion.p>
+          )}
+
+          {/* Email */}
+          <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
+            <label htmlFor="signup-email" className="label">
+              Email
+            </label>
+            <input
+              id="signup-email"
+              type="email"
+              placeholder="Enter email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="input h-12"
+            />
+          </motion.div>
+
+          {/* Password */}
+          <motion.div className="flex flex-col gap-1.5" variants={itemVariants}>
+            <label htmlFor="signup-password" className="label">
+              Password
+            </label>
+            <input
+              id="signup-password"
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="input h-12"
+            />
+          </motion.div>
+
+          {/* Actions */}
+          <motion.div className="flex flex-col gap-3 pt-1" variants={itemVariants}>
+            <motion.button
+              type="submit"
+              disabled={signup.isPending}
+              className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
+              whileHover={{ scale: 0.99 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              {signup.isPending ? "Creating account…" : "Sign up"}
+            </motion.button>
+
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-gray-200" />
+              <span className="text-xs text-gray-400">or</span>
+              <div className="h-px flex-1 bg-gray-200" />
+            </div>
+
+            <OAuthButtons />
+          </motion.div>
+        </motion.form>
+
+        {/* Footer */}
+        <motion.p
+          className="mt-6 text-center text-sm text-gray-500"
+          variants={itemVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          Already have an account?{" "}
+          <Link
+            href="/auth/login"
+            className="text-[#2E9E52] font-semibold hover:underline focus-visible:outline-none"
+          >
+            Log in
+          </Link>
+        </motion.p>
+      </div>
+    </motion.div>
+  );
+}

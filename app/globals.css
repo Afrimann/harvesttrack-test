@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary-color: #2E9E52;
+  --main-h2: 24px;
+  --main-h3: 20px;
+  --main-body-text: 17px;
+  --secondary-body-text: 15px;
+  --small-body-text: 13px;
+  --main-p: 16px;
+  --main-a: 16px;
+  --main-li: 16px;
+  --main-h1: 32px;
+  --form-label-font: 15px;
+  --form-input-placeholder: 13px;
+  --form-btn-text: 16px;
+  --error-text: 13px;
+  --border-color: #E5E5E5;
+  /* --error-color:  */
+}
+
+@theme inline{
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-lg: var(--main-h1);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-plus-jakarta-sans), sans-serif;
+}
+
+.label{
+  font-size: 14px;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+.input{
+  width: 100%;
+  border: 1px solid #E5E5E5;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(46, 158, 82, 0.12);
+}
+.input::placeholder{
+  font-size: 14px;
+  color: #9CA3AF;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 12px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 8px 16px rgba(46, 158, 82, 0.2);
+}
+
+.btn-secondary {
+  background: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 12px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 8px 16px rgba(46, 158, 82, 0.2);
+}
