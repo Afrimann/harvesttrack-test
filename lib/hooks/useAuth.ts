@@ -55,11 +55,13 @@ export function useLogin() {
 }
 
 export function useUserDetails() {
-  const { accessToken } = useAuthStore()
   const router = useRouter()
 
   return useMutation({
-    mutationFn: (data: UserDetailsRequest) => authRepository.updateProfile(data, accessToken!),
+    mutationFn: (data: UserDetailsRequest) => {
+      const { accessToken } = useAuthStore.getState()
+      return authRepository.updateProfile(data, accessToken!)
+    },
     onSuccess: (response) => {
       useUserStore.getState().setUser(response.data)
       router.push('/auth/workspace')
@@ -206,11 +208,13 @@ export function useOAuthCallback() {
 }
 
 export function useWorkspaceSetup() {
-  const { accessToken } = useAuthStore()
   const router = useRouter()
 
   return useMutation({
-    mutationFn: (data: { name: string }) => authRepository.workspaceSetup(data, accessToken!),
+    mutationFn: (data: { name: string }) => {
+      const { accessToken } = useAuthStore.getState()
+      return authRepository.workspaceSetup(data, accessToken!)
+    },
     onSuccess: (response) => {
       useWorkspaceStore.getState().setWorkspace(response.data)
       router.push('/auth/setting-up')
@@ -222,12 +226,14 @@ export function useWorkspaceSetup() {
 }
 
 export function useCreateWorkspace() {
-  const { accessToken } = useAuthStore()
   const router = useRouter()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: { name: string }) => authRepository.workspaceSetup(data, accessToken!),
+    mutationFn: (data: { name: string }) => {
+      const { accessToken } = useAuthStore.getState()
+      return authRepository.workspaceSetup(data, accessToken!)
+    },
     onSuccess: (response) => {
       useWorkspaceStore.getState().setWorkspace(response.data)
       queryClient.invalidateQueries({ queryKey: ['workspaces'] })
